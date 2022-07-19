@@ -8,6 +8,29 @@ optimizer_dict = {"gd" : GD, "sgd" : SGD, "batch_gd" : BatchGD, "sag" : SAG}
 exact_methods = ["direct", "svd", "qr"]
 
 class LinearRegressor(BaseEstimator):
+    """
+    Logistic Regression class implemented with different
+    methods: exact(matrix decompositions) and approximate(gradient).
+    Exact methods faster due to numpy implementation
+
+    Objective loss:
+    L(X, y, w) = ||Xw - y||^2_2
+
+    Attributes
+    ----------
+    method : str
+        Optimization algorithm to minimize loss
+        Availible optimizers:
+        ["direct", "svd", "qr", "gd", "sgd", "batch_gd", "sag"]
+    epochs : int
+        number of optimization iterations
+    tol : float
+        numerical tolerance
+    random_state : int
+        random state to debug calculations
+    optimizer_settings : kwargs
+        kwargs for chosen optimizer
+    """
     def __init__(
         self,
         method: str,
@@ -69,6 +92,17 @@ class LinearRegressor(BaseEstimator):
         return X @ self.w_[1:] + self.w_[0]
 
 class RidgeRegressor(BaseEstimator):
+    """
+    Regularized linear regression implemented with svd
+
+    Objective loss:
+    L(X, y, w) = ||Xw - y||^2_2 + alpha * ||w||^2_2
+
+    Attributes
+    ----------
+    alpha : float
+        penalty parameter
+    """
     def __init__(
         self,
         alpha: float = 0,

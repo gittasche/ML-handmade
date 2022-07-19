@@ -11,6 +11,28 @@ loss_dict = {"perceptron" : PerceptronLoss, "logistic" : LogisticLoss,
 optimizer_dict = {"gd" : GD, "sgd" : SGD, "batch_gd" : BatchGD, "sag" : SAG}
 
 class LinearClassifier(BaseEstimator):
+    """
+    Linear classifier class
+
+    Attributes
+    ----------
+    loss : str
+        Loss function to minimize.
+        Availible losses:
+        ["perceptron", "logistic", "hinge", "sigmoid"]
+    optimizer : str
+        Optimization algorithm to minimize loss
+        Availible optimizers:
+        ["gd", "sgd", "batch_gd", "sag"]
+    epochs : int
+        number of optimization iterations
+    tol : float
+        numerical tolerance
+    random_state : int
+        random state to debug calculations
+    optimizer_settings : kwargs
+        kwargs for chosen optimizer
+    """
     def __init__(self, loss, optimizer, epochs, tol=1e-3, random_state=1, **optimizer_settings):
         self.loss = loss_dict[loss]()
         self.optimizer = optimizer_dict[optimizer](**optimizer_settings)
@@ -33,7 +55,21 @@ class LinearClassifier(BaseEstimator):
     def _predict(self, X):
         return np.where(self.decision_function(X) > 0, 1, -1)
 
-class SoftmaxRegression(BaseEstimator):
+class SoftmaxRegressor(BaseEstimator):
+    """
+    Softmax regression class (multinominal logistic regression).
+    Softmax function can't be represented as finite sum,
+    so we can't use any stochastic descents here.
+
+    Attributes
+    ----------
+    eta : float
+        learning rate
+    epochs : int
+        number of optimization iterations
+    random_state : int
+        random state to debug calculations
+    """
     def __init__(self, eta, epochs, random_state=1):
         self.eta = eta
         self.epochs = epochs
