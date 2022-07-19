@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-__version__ = "0.0.4"
+__version__ = "0.0.6"
 
 here = path.abspath(path.dirname(__file__))
 
@@ -14,6 +14,7 @@ setup(
     version=__version__,
     description="Implemented some ML routines",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author="gittasche",
     python_reqires=">=3.7",
     install_requires=["numpy", "matplotlib"],

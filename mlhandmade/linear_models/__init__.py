@@ -1,6 +1,6 @@
 from mlhandmade.linear_models.linear_classifier import (
     LinearClassifier,
-    SoftmaxRegression
+    SoftmaxRegressor
 )
 
 from mlhandmade.linear_models.linear_regressor import (
@@ -10,7 +10,7 @@ from mlhandmade.linear_models.linear_regressor import (
 
 __all__ = [
     "LinearClassifier",
-    "SoftmaxRegression",
+    "SoftmaxRegressor",
     "LinearRegressor",
     "RidgeRegressor"
 ]
