@@ -33,4 +33,4 @@ class LinearKernel(Kernel):
         """
         if pairwise:
             x, y = self._pairwise(x, y)
-        return np.sum(x, y, axis=-1) + self.const
+        return np.sum(x * y, axis=-1) + self.const

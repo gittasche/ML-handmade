@@ -6,7 +6,7 @@ class RBFKernel(Kernel):
     Radial basis function kernel:
     k(x, y) = C0 * exp(-0.5 * (x - y).T @ P @ (x - y)),
     where P is a diagonal matrix of parameters.
-    with `P = I / sigma^2` and `C0 = 0` we get classical
+    with `P = I / sigma^2` and `C0 = 1` we get classical
     representation from C. Bishop's PRML book
 
     Attributes
@@ -20,6 +20,8 @@ class RBFKernel(Kernel):
         """
         construct Radial basis kernel function
         """
+        if not isinstance(params, np.ndarray):
+            params = np.asarray(params)
         assert params.ndim == 1
         self.params = params
         self.ndim = len(params) - 1
@@ -52,7 +54,7 @@ class RBFKernel(Kernel):
             x, y = self._pairwise(x, y)
         d = self.params[1:] * (x - y) ** 2
         delta = np.exp(-0.5 * np.sum(d, axis=-1))
-        deltas = -0.5 * (x - y) ** 2 * (delta * self.params[0])[:, :, None]
+        deltas = -0.5 * (x - y) ** 2 * (delta * self.params[0])[:, :, np.newaxis]
         return np.concatenate((np.expand_dims(delta, 0), deltas.T))
 
     def update_parameters(self, updates):

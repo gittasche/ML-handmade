@@ -113,7 +113,7 @@ class RidgeRegressor(BaseEstimator):
     def _solve_svd(X, y, alpha):
         # w = V x (S^T x S + alpha * I)^-1 x S^T x U^T x y
         U, s, Vt = np.linalg.svd(X, full_matrices=False)
-        idx = s > 1e-15
+        idx = s > 1e-15 # avoid numerical overflow in denominator
         s_nnz = s[idx]
         UTy = U.T @ y
         d = np.zeros(s.size, dtype=X.dtype)

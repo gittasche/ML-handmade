@@ -1,5 +1,6 @@
 from mlhandmade import (
     linear_models,
+    discriminant_analysis,
     knn,
     svm,
     multiclass,
@@ -10,6 +11,7 @@ from mlhandmade import (
 
 __all__ = [
     "linear_models",
+    "discriminant_analysis",
     "knn",
     "svm",
     "multiclass",

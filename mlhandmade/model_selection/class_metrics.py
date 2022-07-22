@@ -1,5 +1,6 @@
 import numpy as np
 from itertools import product
+
 from ..utils.validations import check_consistent_length
 
 def accuracy_score(y_true, y_pred, *, normalize=True, sample_weight=None):

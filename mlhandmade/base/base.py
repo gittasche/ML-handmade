@@ -74,3 +74,19 @@ class BaseEstimator(object):
     @abstractmethod
     def _predict(self, X=None):
         raise NotImplementedError()
+
+    def transform(self, X=None):
+        if not isinstance(X, np.ndarray):
+            X = np.asarray(X)
+        
+        if X.ndim != 2:
+            X = np.atleast_2d(X)
+
+        if X is not None and not self.fit_required:
+            return self._transform(X)
+        else:
+            raise ValueError("Fit is necessary for this estimator.")
+
+    @abstractmethod
+    def _transform(self, X=None):
+        raise NotImplementedError()

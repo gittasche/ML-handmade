@@ -77,7 +77,8 @@ class SoftmaxRegressor(BaseEstimator):
 
     @staticmethod
     def _softmax(X, w):
-        exp_a = np.exp(X @ w)
+        a = X @ w
+        exp_a = np.exp(a - np.max(a, axis=-1, keepdims=True))
         return exp_a / np.sum(exp_a, axis=-1, keepdims=True)
 
     def _fit(self, X, y):

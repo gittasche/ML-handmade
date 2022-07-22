@@ -54,3 +54,25 @@ class KFoldCV:
             start, stop = current, current + fold_size
             yield indices[start:stop]
             current = stop
+
+def cross_val_score(
+    estimator,
+    X,
+    y,
+    *,
+    score=None,
+    cv=5,
+    shuffle=False,
+    random_state=0,
+    **score_kwargs
+):
+    if score is None:
+        raise ValueError("Choose availible score.")
+
+    scores = np.zeros(cv)
+    kf = KFoldCV(n_splits=cv, shuffle=shuffle, random_state=random_state)
+    for score_idx, (train_idx, test_idx) in enumerate(kf.split(X)):
+        estimator.fit(X[train_idx], y[train_idx])
+        y_pred = estimator.predict(X[test_idx])
+        scores[score_idx] = score(y[test_idx], y_pred, **score_kwargs)
+    return np.mean(scores)
