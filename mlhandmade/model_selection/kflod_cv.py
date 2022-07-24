@@ -3,6 +3,21 @@ from numpy.typing import ArrayLike
 from mlhandmade.preprocessing.data_preprocessiong import data_shuffle
 
 class KFoldCV:
+    """
+    k-fold cross-validation.
+    This class allows to iterate over
+    train and test indices for each cross
+    validation fold
+
+    Parameters
+    ----------
+    n_splits : int (default: 5)
+        number of splits in each fold
+    shuffle : bool (default: False)
+        shuffle data before iterations
+    random_state : int (default: 0)
+        seed for debugging
+    """
     def __init__(
         self,
         n_splits: int = 5,
@@ -28,6 +43,21 @@ class KFoldCV:
                 y = np.atleast_2d(y)
 
     def split(self, X: np.ndarray, y: np.ndarray = None):
+        """
+        Get iterator over all folds
+
+        Parametrs
+        ---------
+        X : ndarray of shape (N, D)
+            ndarray of input obejcts
+        y : ndarray of shape (N,) (default: None)
+            ndarray of input targets
+        
+        Yields
+        ------
+        train_index, test_index : ndarrays
+            indices for train and test parts of folds
+        """
         self._validate_params(X, y)
         self.num_samples_ = X.shape[0]
         indices = np.arange(self.num_samples_)

@@ -12,6 +12,15 @@ kernels = {
 }
 
 class BaseSVM(BaseEstimator):
+    """
+    Base class for SVM implements QP solver
+
+    Parameters
+    ----------
+    C : float
+        constraint for lagrange multipliers
+        in dual problem
+    """
     def __init__(self, C):
         self.C = C
     
@@ -71,9 +80,34 @@ class BaseSVM(BaseEstimator):
         return coef
 
     def decision_function(self, X):
+        """
+        SVM classifiers can be used with multiclass strategies
+        """
         raise NotImplementedError()
 
 class SupportVectorClassifier(BaseSVM):
+    """
+    support vector classifier algorithm requires solution of 
+    the next QP problem:
+
+    min ->coef | 0.5 * coef^T @ Q @ coef - grad^T @ coef
+    subject to | t^T @ coef = 0
+               | 0 <= coef[i] <= C, i = 1, ..., N
+
+    where Q = Gram, Gram = K(X, X)
+    grad - ones(N)
+    coef - zeros(N)
+    t - class labels y
+
+    Parameters
+    ----------
+    C : float (default: np.inf)
+        inverse regularization parameter (inf - no penalty)
+    kernel : str (default: "linear")
+        kernel insted of inner product
+    kernel_kwargs : kwargs
+        parameters of kernel
+    """
     def __init__(self, C=np.inf, kernel="linear", **kernel_kwargs):
         if kernel not in kernels:
             raise ValueError(f"Unkown kernel: avilible only {list(kernels.keys())}")
@@ -143,6 +177,29 @@ class SupportVectorClassifier(BaseSVM):
         return distance
 
 class SupportVectorRegressor(BaseSVM):
+    """
+    support vector classifier algorithm requires solution of 
+    the next QP problem:
+
+    min ->coef | 0.5 * coef^T @ Q @ coef - grad^T @ coef
+    subject to | t^T @ coef = 0
+               | 0 <= coef[i] <= C, i = 1, ..., N
+
+    where Q = [[Gram, -Gram]
+               [-Gram, Gram]], Gram = K(X, X)
+    grad = - [eps * ones(N) - y, eps * ones(N) + y]
+    coef = zeros(2 * N)
+    t = [ones(N), -ones(N)]
+
+    Parameters
+    ----------
+    C : float (default: np.inf)
+        inverse regularization parameter (inf - no penalty)
+    kernel : str (default: "linear")
+        kernel insted of inner product
+    kernel_kwargs : kwargs
+        parameters of kernel
+    """
     def __init__(self, C=np.inf, eps=0.1, kernel="linear", **kernel_kwargs):
         if kernel not in kernels:
             raise ValueError(f"Unkown kernel: avilible only {list(kernels.keys())}")
@@ -174,10 +231,11 @@ class SupportVectorRegressor(BaseSVM):
         support_mask = np.abs(alpha) > tol
         self.a = alpha[support_mask]
         self.X = X[support_mask]
+        self.y = y[support_mask]
 
     def _predict(self, X):
         """
-        predict labels of the input
+        predict values of the input
 
         Parameters
         ----------
@@ -187,14 +245,14 @@ class SupportVectorRegressor(BaseSVM):
         Returns
         -------
         label : (sample_size,) ndarray
-            predicted labels
+            predicted values
         """
         y = self.decision_function(X)
         return y
 
     def decision_function(self, X):
         """
-        calculate distance from the decision boundary
+        calculate target value
 
         Parameters
         ----------
@@ -204,10 +262,10 @@ class SupportVectorRegressor(BaseSVM):
         Returns
         -------
         distance : (sample_size,) ndarray
-            distance from the boundary
+            target value
         """
-        distance = np.sum(
+        target = np.sum(
             self.a
             * self.kernel(X, self.X),
             axis=-1) + self.b
-        return distance
+        return target

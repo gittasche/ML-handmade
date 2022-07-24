@@ -1,25 +1,23 @@
 import numpy as np
-from mlhandmade.svm.kernel import Kernel
 
-class PolynomialKernel(Kernel):
+from mlhandmade.kernel_methods.kernel import Kernel
+
+class LinearKernel(Kernel):
     """
-    Polynomial kernel
-    k(x, y) = (x @ y + c)^M
+    Linear kernel:
+    k(x, y) = x @ y + c
 
     Parameters
     ----------
     const : float
         a constant to be added
-    degree : int
-        degree of polynomial order
     """
-    def __init__(self, degree=2, const=0.0):
+    def __init__(self, const=0.0):
         self.const = const
-        self.degree = degree
 
     def __call__(self, x, y, pairwise=True):
         """
-        calculate pairwise polynomial kernel
+        calculate pairwise linear kernel
 
         Parameters
         ----------
@@ -31,8 +29,8 @@ class PolynomialKernel(Kernel):
         Returns
         -------
         output : ndarray
-            polynomial kernel
+            linear kernel
         """
         if pairwise:
             x, y = self._pairwise(x, y)
-        return (np.sum(x * y, axis=-1) + self.const) ** self.degree
+        return np.sum(x * y, axis=-1) + self.const
