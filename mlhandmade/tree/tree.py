@@ -33,6 +33,7 @@ class BaseDecisionTree(BaseEstimator):
         max_features=None,
         min_samples_leaf=1,
         max_depth=np.inf,
+        random_state=0,
         n_features=None,
         n_classes=None
     ):
@@ -41,10 +42,17 @@ class BaseDecisionTree(BaseEstimator):
         self.max_features = max_features
         self.min_samples_leaf = min_samples_leaf
         self.max_depth = max_depth
+        self.rgen = self._get_rgen(random_state)
 
         self.n_features = n_features
         self.n_classes = n_classes
         self.is_leaf = False
+
+    @staticmethod
+    def _get_rgen(random_state):
+        if not isinstance(random_state, np.random.RandomState):
+            return np.random.RandomState(random_state)
+        return random_state
 
     def _fit(self, X, y):
         if self.is_classifier:
@@ -58,10 +66,8 @@ class BaseDecisionTree(BaseEstimator):
 
             if self.max_features is None:
                 self.max_features = self.n_features
-                features = np.arange(self.n_features)
-            else:
-                features = np.random.choice(self.n_features, self.max_features)
             
+            features = self.rgen.choice(self.n_features, self.max_features)
             gain, feature, value = get_best_split(self.criterion, X, y, features)
             assert gain != np.inf
             
@@ -76,6 +82,7 @@ class BaseDecisionTree(BaseEstimator):
                 self.max_features,
                 self.min_samples_leaf,
                 self.max_depth - 1,
+                self.rgen,
                 self.n_features,
                 self.n_classes
             )
@@ -87,6 +94,7 @@ class BaseDecisionTree(BaseEstimator):
                 self.max_features,
                 self.min_samples_leaf,
                 self.max_depth - 1,
+                self.rgen,
                 self.n_features,
                 self.n_classes
             )
@@ -135,10 +143,12 @@ class DecisionTreeClassifier(BaseDecisionTree):
     """
     def __init__(
         self,
+        *,
         criterion="gini",
         max_features=None,
         min_samples_leaf=10,
-        max_depth=10
+        max_depth=10,
+        random_state=0
     ):
         is_classifier = True
         criterion = ClassificationCriterion(criterion)
@@ -147,7 +157,8 @@ class DecisionTreeClassifier(BaseDecisionTree):
             criterion,
             max_features,
             min_samples_leaf,
-            max_depth
+            max_depth,
+            random_state
         )
 
 class DecisionTreeRegressor(BaseDecisionTree):
@@ -167,10 +178,12 @@ class DecisionTreeRegressor(BaseDecisionTree):
     """
     def __init__(
         self,
+        *,
         criterion="mse",
         max_features=None,
         min_samples_leaf=10,
-        max_depth=10
+        max_depth=10,
+        random_state=0
     ):
         is_classifier = False
         criterion = RegressionCriterion(criterion)
@@ -179,5 +192,6 @@ class DecisionTreeRegressor(BaseDecisionTree):
             criterion,
             max_features,
             min_samples_leaf,
-            max_depth
+            max_depth,
+            random_state
         )

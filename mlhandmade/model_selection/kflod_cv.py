@@ -26,7 +26,7 @@ class KFoldCV:
     ):
         self.n_splits = n_splits
         self.shuffle = shuffle
-        self.random_state = random_state
+        self.rgen = np.random.RandomState(random_state)
 
     def _validate_params(self, X, y):
         if not isinstance(X, np.ndarray):
@@ -49,7 +49,7 @@ class KFoldCV:
         Parametrs
         ---------
         X : ndarray of shape (N, D)
-            ndarray of input obejcts
+            ndarray of input samples
         y : ndarray of shape (N,) (default: None)
             ndarray of input targets
         
@@ -75,7 +75,7 @@ class KFoldCV:
     def _iter_test_indices(self, X: np.ndarray, y: np.ndarray = None):
         indices = np.arange(self.num_samples_)
         if self.shuffle:
-            indices = data_shuffle(indices)
+            indices = data_shuffle(indices, rgen=self.rgen)
         
         fold_sizes = np.full(self.n_splits, self.num_samples_ // self.n_splits, dtype=int)
         fold_sizes[:self.num_samples_ % self.n_splits] += 1

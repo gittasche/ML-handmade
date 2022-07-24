@@ -2,11 +2,12 @@ import numpy as np
 from itertools import combinations_with_replacement as combinations_w_r
 from itertools import combinations
 
-def data_shuffle(X: np.ndarray, y: np.ndarray = None, seed=None) -> np.ndarray:
-    if seed:
-        np.random.seed(seed)
+def data_shuffle(X: np.ndarray, y: np.ndarray = None, rgen=None) -> np.ndarray:
     idx = np.arange(X.shape[0])
-    np.random.shuffle(idx)
+    if rgen is None:
+        np.random.shuffle(idx)
+    else:
+        rgen.shuffle(idx)
     if y is None:
         return X[idx]
     else:
