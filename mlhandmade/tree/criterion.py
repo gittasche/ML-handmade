@@ -2,56 +2,59 @@ import numpy as np
 import warnings
 
 class BaseCriterion:
-    def gain(self, y, splits):
+    def gain(self, y, splits, sample_weight):
         n = y.size
         n_left, n_right = splits[0].size, splits[1].size
-        left, right = self(splits[0]), self(splits[1])
+        left, right = self(splits[0], sample_weight[0]), self(splits[1], sample_weight[1])
         return n_left / n * left + n_right / n * right
 
 class ClassificationCriterion(BaseCriterion):
     def __init__(self, criterion):
         self.criterion = criterion
     
-    def __call__(self, x):
+    def __call__(self, x, sample_weight):
         if self.criterion == "gini":
-            return self.gini(x)
+            return self.gini(x, sample_weight)
         elif self.criterion == "entropy":
-            return self.entropy(x)
+            return self.entropy(x, sample_weight)
         else:
             raise ValueError("Got unknown criterion.")
 
     @staticmethod
-    def entropy(x):
+    def entropy(x, sample_weight):
         # log2(p) raise a RuntimeWarning even with np.where()
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            p = np.bincount(x) / x.size
+            p = np.bincount(x, weights=sample_weight) / np.sum(sample_weight)
             entrs = np.where(p != 0.0, -p * np.log2(p), 0.0)
             return np.sum(entrs)
 
     @staticmethod
-    def gini(x):
-        p = np.bincount(x) / x.size
-        return np.sum(p * (1 - p))
+    def gini(x, sample_weight):
+        p = np.bincount(x, weights=sample_weight) / np.sum(sample_weight)
+        return 1 - np.sum(p**2)
 
 class RegressionCriterion(BaseCriterion):
     def __init__(self, criterion):
         self.criterion = criterion
 
-    def __call__(self, x):
+    def __call__(self, x, sample_weight):
         if self.criterion == "mse":
-            return self.mse(x)
+            return self.mse(x, sample_weight)
         elif self.criterion == "mae":
-            return self.mae(x)
+            return self.mae(x, sample_weight)
         else:
             raise ValueError("Got unknown criterion.")
 
     @staticmethod
-    def mse(x):
-        x_mean = np.mean(x)
-        return np.mean((x - x_mean)**2)
+    def mse(x, sample_weight):
+        x_mean = np.average(x, weights=sample_weight)
+        return np.average((x - x_mean)**2, weights=sample_weight)
     
     @staticmethod
-    def mae(x):
-        x_median = np.median(x)
-        return np.mean(np.abs(x - x_median))
+    def mae(x, sample_weight):
+        if sample_weight is None:
+            x_median = np.median(x)
+        else:
+            x_median = np.median(x * sample_weight)
+        return np.average(np.abs(x - x_median), weights=sample_weight)

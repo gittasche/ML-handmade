@@ -5,6 +5,7 @@ from operator import mul
 
 from mlhandmade.base import BaseEstimator
 from mlhandmade.model_selection import cross_val_score
+from ..utils.validations import check_random_state
 
 class ParamGrid:
     def __init__(self, param_grid):
@@ -50,7 +51,7 @@ class GridSearchCV(BaseEstimator):
         self.scoring = scoring
         self.cv = cv
         self.shuffle = shuffle
-        self.random_state=random_state
+        self.rgen = check_random_state(random_state)
         self.score_kwargs = score_kwargs
     
     def _fit(self, X, y):
@@ -66,7 +67,7 @@ class GridSearchCV(BaseEstimator):
                 score=self.scoring,
                 cv=self.cv,
                 shuffle=self.shuffle,
-                random_state=self.random_state,
+                random_state=self.rgen,
                 **self.score_kwargs
             )
             estimators.append(estimator)

@@ -3,6 +3,7 @@ import numpy as np
 from mlhandmade.base.base import BaseEstimator
 from mlhandmade.preprocessing.data_preprocessiong import add_bias_feature
 from .optimizers import *
+from ..utils.validations import check_random_state
 
 optimizer_dict = {"gd" : GD, "sgd" : SGD, "batch_gd" : BatchGD, "sag" : SAG}
 exact_methods = ["direct", "svd", "qr"]
@@ -36,7 +37,7 @@ class LinearRegressor(BaseEstimator):
         method: str,
         epochs: int = None,
         tol: float = 1e-3,
-        random_state: int = 1,
+        random_state: int = 0,
         **optimizer_settings
     ) -> None:
         self._validate_input(method, epochs)
@@ -46,7 +47,7 @@ class LinearRegressor(BaseEstimator):
         
         self.epochs = epochs
         self.tol = tol
-        self.random_state = random_state
+        self.rgen = check_random_state(random_state)
 
     @staticmethod
     def _validate_input(method, epochs):
@@ -70,8 +71,7 @@ class LinearRegressor(BaseEstimator):
         X = add_bias_feature(X)
         
         if self.method in optimizer_dict:
-            rgen = np.random.RandomState(self.random_state)
-            self.w_ = rgen.normal(loc=0.0, scale=0.01, size=self.n_features + 1)
+            self.w_ = self.rgen.normal(loc=0.0, scale=0.01, size=self.n_features + 1)
             for _ in range(self.epochs):
                 self.w_ = self.optimizer.update(self._loss_grad, X, y, self.w_)
                 if np.linalg.norm(X @ self.w_ - y) < self.tol:

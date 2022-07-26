@@ -1,6 +1,8 @@
 import numpy as np
 from numpy.typing import ArrayLike
+
 from mlhandmade.preprocessing.data_preprocessiong import data_shuffle
+from ..utils.validations import check_random_state
 
 class KFoldCV:
     """
@@ -26,18 +28,18 @@ class KFoldCV:
     ):
         self.n_splits = n_splits
         self.shuffle = shuffle
-        self.rgen = np.random.RandomState(random_state)
+        self.rgen = check_random_state(random_state)
 
     def _validate_params(self, X, y):
         if not isinstance(X, np.ndarray):
-            X = np.array(X)
+            X = np.asarray(X)
         
         if X.ndim < 2:
             X = np.atleast_2d(X)
 
         if y is not None:
             if not isinstance(y, np.ndarray):
-                y = np.array(y)
+                y = np.asarray(y)
             
             if y.ndim < 2:
                 y = np.atleast_2d(y)
