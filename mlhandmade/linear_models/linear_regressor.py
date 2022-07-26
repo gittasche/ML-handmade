@@ -1,7 +1,7 @@
 import numpy as np
 
-from mlhandmade.base.base import BaseEstimator
-from mlhandmade.preprocessing.data_preprocessiong import add_bias_feature
+from ..base import BaseEstimator
+from ..preprocessing import add_bias_feature
 from .optimizers import *
 from ..utils.validations import check_random_state
 

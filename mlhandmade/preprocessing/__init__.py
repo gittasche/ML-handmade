@@ -1,4 +1,4 @@
-from mlhandmade.preprocessing.data_preprocessiong import (
+from mlhandmade.preprocessing.data_preprocessing import (
     data_shuffle,
     ordinal,
     binary,

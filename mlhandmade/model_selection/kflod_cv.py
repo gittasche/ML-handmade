@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import ArrayLike
 
-from mlhandmade.preprocessing.data_preprocessiong import data_shuffle
+from ..preprocessing import data_shuffle
 from ..utils.validations import check_random_state
 
 class KFoldCV:

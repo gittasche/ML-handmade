@@ -1,6 +1,6 @@
 from abc import abstractmethod
 import numpy as np
-from mlhandmade.preprocessing.data_preprocessiong import data_shuffle
+from ..preprocessing import data_shuffle
 
 class BaseOptimizer:
     """

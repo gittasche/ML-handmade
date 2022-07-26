@@ -1,7 +1,7 @@
 from abc import abstractmethod
 import numpy as np
 
-from mlhandmade.base import BaseEstimator
+from ..base import BaseEstimator
 from ..tree.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from ..utils.validations import check_random_state
 
@@ -82,6 +82,28 @@ class BaseForest(BaseEstimator):
         raise NotImplementedError()
 
 class RandomForestClassifier(BaseForest):
+    """
+    Implemntation of random forest classifier
+
+    Parameters
+    ----------
+    n_estimators : int (default: 10)
+        number of trees
+    criterion : ["gini", "entropy"] (default: "gini")
+        criterion for DecisionTreeClassifier
+    max_depth : int or inf (default: inf)
+        max depth of trees
+    min_samples_leaf : int (default: 1)
+        min samples in leaf to split node
+    max_features : "sqrt", int or None (default: "sqrt")
+        features to consider on each split
+    bootstrap : bool (default: True)
+        use bootstrap sample selection
+    max_samples : int, float or None (default: None)
+        - int: number of samples in bootstrap
+        - float: fraction of whole data in bootstrap
+        - None: number of samples in bootstrap = number of samples in data
+    """
     def __init__(
         self,
         n_estimators=10,
@@ -127,6 +149,28 @@ class RandomForestClassifier(BaseForest):
         return all_proba
 
 class RandomForestRegressor(BaseForest):
+    """
+    Implemntation of random forest classifier
+
+    Parameters
+    ----------
+    n_estimators : int (default: 10)
+        number of trees
+    criterion : ["mse", "mae"] (default: "mse")
+        criterion for DecisionTreeClassifier
+    max_depth : int or inf (default: inf)
+        max depth of trees
+    min_samples_leaf : int (default: 1)
+        min samples in leaf to split node
+    max_features : "sqrt", int or None (default: None)
+        features to consider on each split
+    bootstrap : bool (default: True)
+        use bootstrap sample selection
+    max_samples : int, float or None (default: None)
+        - int: number of samples in bootstrap
+        - float: fraction of whole data in bootstrap
+        - None: number of samples in bootstrap = number of samples in data
+    """
     def __init__(
         self,
         n_estimators=10,

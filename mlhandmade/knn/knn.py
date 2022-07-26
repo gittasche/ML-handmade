@@ -1,6 +1,6 @@
 import numpy as np
 
-from mlhandmade.base.base import BaseEstimator
+from ..base import BaseEstimator
 from .kd_tree import KDTree
 from .ball_tree import BallTree
 
@@ -92,9 +92,14 @@ class KNNClassifier(KNNBase):
     Multinominal classification with KNN.
     Using np.bincount to get number of nearest class samples.
     """
+    def _fit(self, X, y):
+        self.classes_ = np.unique(y)
+        self.n_classes_ = self.classes_.shape[0]
+        return super()._fit(X, y)
+
     def _aggregate(self, neighbors_targets, weights):
         labels = np.bincount(neighbors_targets, weights=weights)
-        return labels.argmax()
+        return self.classes_.take(labels.argmax(), axis=0)
 
 
 class KNNRegressor(KNNBase):

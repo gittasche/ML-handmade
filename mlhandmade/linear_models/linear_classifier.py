@@ -1,9 +1,9 @@
 import numpy as np
 
-from mlhandmade.base.base import BaseEstimator
+from ..base import BaseEstimator
 from .losses import *
 from .optimizers import *
-from mlhandmade.preprocessing.data_preprocessiong import add_bias_feature, onehot
+from ..preprocessing import add_bias_feature, onehot
 from ..utils.validations import check_random_state
 
 loss_dict = {"perceptron" : PerceptronLoss, "logistic" : LogisticLoss,

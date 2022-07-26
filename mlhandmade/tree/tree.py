@@ -1,7 +1,7 @@
 from abc import abstractmethod
 import numpy as np
 
-from mlhandmade.base import BaseEstimator
+from ..base import BaseEstimator
 from .criterion import ClassificationCriterion, RegressionCriterion
 from .splitter import get_best_split, get_split_mask
 from ..utils.validations import check_random_state, check_sample_weight

@@ -1,6 +1,6 @@
 import numpy as np
 
-from mlhandmade.base import BaseEstimator
+from ..base import BaseEstimator
 
 def _class_means(X, y):
     classes, y = np.unique(y, return_inverse=True)

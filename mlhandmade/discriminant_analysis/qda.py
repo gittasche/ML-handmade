@@ -1,6 +1,6 @@
 import numpy as np
 
-from mlhandmade.base import BaseEstimator
+from ..base import BaseEstimator
 
 class QuadraticDiscriminantAnalysis(BaseEstimator):
     def __init__(self, tol=1e-4, reg_param=0.0):

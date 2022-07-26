@@ -1,6 +1,6 @@
 import numpy as np
 
-from mlhandmade.base.base import BaseEstimator
+from ..base import BaseEstimator
 from .linear import LinearKernel
 from .poly import PolynomialKernel
 from .rbf import RBFKernel

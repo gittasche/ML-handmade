@@ -1,5 +1,5 @@
 import numpy as np
-from mlhandmade.kernel_methods.kernel import Kernel
+from .kernel import Kernel
 
 class RBFKernel(Kernel):
     """

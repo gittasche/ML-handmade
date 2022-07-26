@@ -28,7 +28,7 @@ class OVR(BaseEstimator):
     
     def _predict(self, X: np.ndarray):
         all_outputs = np.array([classifier.decision_function(X) for classifier in self.classifiers_])
-        return np.argmax(all_outputs, axis=0)
+        return self.labels.take(np.argmax(all_outputs, axis=0), axis=0)
 
 
 class OVO(BaseEstimator):
@@ -72,4 +72,4 @@ class OVO(BaseEstimator):
                 confidences[:, j] -= z
         transformed_confidences = confidences / (3 * (np.abs(confidences) + 1))
         total_votes = np.argmax(votes + transformed_confidences, axis=1)
-        return total_votes
+        return self.labels.take(total_votes, axis=0)

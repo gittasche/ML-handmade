@@ -4,9 +4,10 @@ from mlhandmade import (
     knn,
     kernel_methods,
     tree,
+    ensemble,
     multiclass,
     preprocessing,
-    plot,
+    plotting,
     model_selection
 )
 
@@ -16,8 +17,9 @@ __all__ = [
     "knn",
     "kernel_methods",
     "tree",
+    "ensemble",
     "multiclass",
     "preprocessing",
-    "plot",
+    "plotting",
     "model_selection"
 ]

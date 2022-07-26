@@ -3,8 +3,8 @@ from itertools import product
 from functools import partial, reduce
 from operator import mul
 
-from mlhandmade.base import BaseEstimator
-from mlhandmade.model_selection import cross_val_score
+from ..base import BaseEstimator
+from ..model_selection import cross_val_score
 from ..utils.validations import check_random_state
 
 class ParamGrid:
