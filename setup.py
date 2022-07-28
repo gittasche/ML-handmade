@@ -17,7 +17,7 @@ setup(
     long_description_content_type="text/markdown",
     author="gittasche",
     python_reqires=">=3.7",
-    install_requires=["numpy", "matplotlib"],
+    install_requires=["numpy", "matplotlib", "scipy"],
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False
