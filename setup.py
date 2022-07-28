@@ -9,6 +9,11 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
+with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
+    all_reqs = f.read().split("\n")
+
+install_requires = [req.strip() for req in all_reqs if "git+" not in req]
+
 setup(
     name="mlhandmade",
     version=__version__,
@@ -16,8 +21,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="gittasche",
-    python_reqires=">=3.7",
-    install_requires=["numpy", "matplotlib", "scipy"],
+    python_reqires=">=3.9",
+    install_requires=install_requires,
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False
