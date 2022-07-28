@@ -1,4 +1,4 @@
-name: Examples
+name: Run examples
 
 on:
   push:
@@ -25,6 +25,7 @@ jobs:
       run: | 
         pip install -r requirements.txt
         pip install jupyter
+        pip install mlhandmade
     - name: Run Jupyter notebooks
       run: | 
         for note in `ls examples/*.ipynb`
