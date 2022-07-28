@@ -2,9 +2,9 @@ name: Examples
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, actions ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, actions ]
   
 jobs:
   examples:
