@@ -1,4 +1,5 @@
 # ML-handmade
+=============
 Implemented some ML routines including other ML stuff such as preprocessing, visualization and model selection.
 
 ### References
@@ -17,6 +18,8 @@ Implemented some ML routines including other ML stuff such as preprocessing, vis
 * Multiclass strategies (One-vs-One, One-vs-Rest)
 * Support vector (SVC and $\epsilon$-SVR) with different kernels(Linear, RBF, Polynomial)
 * Discriminant analysis(linear & quadratic) implemented using SVD
+* Decision tree classifier and regressor
+* Random forest classifier and regressor with bootstrap
 * Other ML stuff, for instance, k-fold cross validation, quality metrics, plotting, e.t.c
 
 ### Installation

@@ -21,7 +21,7 @@ def get_best_split(criterion, X, y, features, sample_weight):
             splits = (y[left_mask], y[right_mask])
             splits_weight = (sample_weight[left_mask], sample_weight[right_mask])
 
-            if not np.any(splits_weight[0]) or not np.any(splits_weight[1]):
+            if splits_weight[0].max() == 0.0 or splits_weight[1].max() == 0.0:
                 continue
 
             gain = criterion.gain(y, splits, splits_weight)

@@ -62,7 +62,7 @@ class BaseDecisionTree(BaseEstimator):
             array of targets
         sample_weight : array-like of shape (N,), number, None
             array of weights for all statistics: average, probability, median
-            sample_weight is needed for random forest bootstrap implementation
+            sample_weight is needed for some ensemble algorithms such as AdaBoost
         """
         if self.is_classifier:
             self.classes_ = np.unique(y)
@@ -134,6 +134,10 @@ class BaseDecisionTree(BaseEstimator):
     @abstractmethod
     def _predict(self, X):
         raise NotImplementedError()
+
+    @property
+    def get_rgen(self):
+        return self.rgen
 
 class DecisionTreeClassifier(BaseDecisionTree):
     """

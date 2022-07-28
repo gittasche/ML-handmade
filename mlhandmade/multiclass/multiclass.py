@@ -1,6 +1,6 @@
 import numpy as np
 from copy import copy
-from mlhandmade.base.base import BaseEstimator
+from ..base import BaseEstimator
 
 class OVR(BaseEstimator):
     """

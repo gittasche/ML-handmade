@@ -27,7 +27,7 @@ class BaseForest(BaseEstimator):
 
     Parameters
     ----------
-    base_estimator : BaseEstimator instance
+    base_tree : BaseDecisionTree class
         DecisionTreeClassifier in case of classification
         DecisionTreeRegressor in case of regression
     estimator_kwargs : dict
@@ -44,14 +44,14 @@ class BaseForest(BaseEstimator):
     """
     def __init__(
         self,
-        base_estimator,
+        base_tree,
         estimator_kwargs,
         n_estimators=10,
         bootstrap=False,
         max_samples=None,
         random_state=0
     ):
-        self.base_estimator = base_estimator
+        self.base_tree = base_tree
         self.n_estimators = n_estimators
         self.bootstrap = bootstrap
         self.max_samples = max_samples
@@ -59,9 +59,11 @@ class BaseForest(BaseEstimator):
         self.estimator_kwargs = estimator_kwargs
 
     def _fit(self, X, y):
+        # get different random states for each tree in ensemble
+        seeds = self.rgen.randint(1000, size=self.n_estimators)
         trees = [
-            self.base_estimator(**self.estimator_kwargs)
-            for _ in range(self.n_estimators)
+            self.base_tree(**self.estimator_kwargs, random_state=seed)
+            for seed in seeds
         ]
 
         self.estimators_ = []
@@ -69,9 +71,13 @@ class BaseForest(BaseEstimator):
         n_samples_bootstrap = _get_n_sampes_bootstrap(self.n_samples, self.max_samples)
         for tree in trees:
             if self.bootstrap:
-                sample_indices = self.rgen.randint(0, self.n_samples, n_samples_bootstrap)
-                sample_counts = np.bincount(sample_indices, minlength=self.n_samples)
-                tree.fit(X, y, sample_weight=sample_counts)
+                # get bootstrap data from different random states
+                bootstrap_idx = tree.get_rgen.choice(
+                    np.arange(self.n_samples),
+                    size=n_samples_bootstrap,
+                    replace=True,
+                )
+                tree.fit(X[bootstrap_idx], y[bootstrap_idx])
             else:
                 tree.fit(X, y)
 
@@ -121,10 +127,9 @@ class RandomForestClassifier(BaseForest):
             "max_depth": max_depth,
             "min_samples_leaf": min_samples_leaf,
             "max_features": max_features,
-            "random_state": random_state
         }
         super().__init__(
-            base_estimator=DecisionTreeClassifier,
+            base_tree=DecisionTreeClassifier,
             estimator_kwargs=estimator_kwargs,
             n_estimators=n_estimators,
             bootstrap=bootstrap,
@@ -188,10 +193,9 @@ class RandomForestRegressor(BaseForest):
             "max_depth": max_depth,
             "min_samples_leaf": min_samples_leaf,
             "max_features": max_features,
-            "random_state": random_state
         }
         super().__init__(
-            base_estimator=DecisionTreeRegressor,
+            base_tree=DecisionTreeRegressor,
             estimator_kwargs=estimator_kwargs,
             n_estimators=n_estimators,
             bootstrap=bootstrap,

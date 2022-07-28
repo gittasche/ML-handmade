@@ -3,7 +3,14 @@ from mlhandmade.ensemble.forest import (
     RandomForestRegressor
 )
 
+from mlhandmade.ensemble.adaboost import (
+    AdaBoostClassifier,
+    AdaBoostRegressor
+)
+
 __all__ = [
     "RandomForestClassifier",
-    "RandomForestRegressor"
+    "RandomForestRegressor",
+    "AdaBoostClassifier",
+    "AdaBoostRegressor"
 ]

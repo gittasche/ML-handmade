@@ -1,6 +1,8 @@
 from abc import abstractmethod
 import numpy as np
 
+from ..utils.validations import _num_features, _num_samples
+
 class BaseEstimator(object):
     """
     Base class for all estimators
@@ -33,10 +35,7 @@ class BaseEstimator(object):
         if X.size == 0:
             raise ValueError('X is an empty array.')
         
-        if X.ndim == 1:
-            self.n_samples, self.n_features = 1, X.shape[0]
-        else:
-            self.n_samples, self.n_features = X.shape[0], np.prod(X.shape[1:])
+        self.n_samples, self.n_features = _num_samples(X), _num_features(X)
 
         if self.y_required:
             if y is None:

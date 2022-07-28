@@ -1,5 +1,4 @@
 import numpy as np
-import warnings
 
 class BaseCriterion:
     def gain(self, y, splits, sample_weight):
@@ -23,11 +22,9 @@ class ClassificationCriterion(BaseCriterion):
     @staticmethod
     def entropy(x, sample_weight):
         # log2(p) raise a RuntimeWarning even with np.where()
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            p = np.bincount(x, weights=sample_weight) / np.sum(sample_weight)
-            entrs = np.where(p != 0.0, -p * np.log2(p), 0.0)
-            return np.sum(entrs)
+        p = np.bincount(x, weights=sample_weight) / np.sum(sample_weight)
+        np.clip(p, np.finfo(p.dtype).eps, None, out=p)
+        return np.sum(-p * np.log2(p))
 
     @staticmethod
     def gini(x, sample_weight):

@@ -1,25 +1,50 @@
 import numpy as np
+import numbers
 
-def _num_samples(x):
-    message = "Expected sequence or array-like, got %s" %type(x)
+def _num_samples(X):
+    message = f"Expected sequence or array-like, got {type(X)}"
 
-    if not hasattr(x, "__len__") and not hasattr(x, "shape"):
-        if hasattr(x, "__array__"):
-            x = np.asarray(x)
+    if not hasattr(X, "__len__") and not hasattr(X, "shape"):
+        if hasattr(X, "__array__"):
+            X = np.asarray(X)
         else:
             raise TypeError(message)
 
-    if hasattr(x, "shape") and x.shape is not None:
-        if len(x.shape) == 0:
-            raise TypeError("Singleton array %r cannot be considered a valid collection." % x)
+    if hasattr(X, "shape") and X.shape is not None:
+        if len(X.shape) == 0:
+            raise TypeError(f"Singleton array {X} cannot be considered a valid collection.")
 
-        if isinstance(x.shape[0], int):
-            return x.shape[0]
+        if isinstance(X.shape[0], int):
+            return X.shape[0]
 
     try:
-        return len(x)
-    except TypeError:
+        return len(X)
+    except Exception as err:
+        raise TypeError(message) from err
+
+def _num_features(X):
+    message = f"Unable to find the number of features from X of type {type(X)}"
+    if not hasattr(X, "__len__") and not hasattr(X, "shape"):
+        if not hasattr(X, "__array__"):
+            raise TypeError(message)
+        X = np.asarray(X)
+    
+    if hasattr(X, "shape"):
+        if not hasattr(X.shape, "__len__") or len(X.shape) <= 1:
+            message += f" with shape {X.shape}"
+            raise TypeError(message)
+        return X.shape[1]
+
+    first_sample = X[0]
+
+    if isinstance(first_sample, (str, bytes, dict)):
+        message += f" where the samples are of type {type(first_sample)}"
         raise TypeError(message)
+    
+    try:
+        return len(first_sample)
+    except Exception as err:
+        raise TypeError(message) from err
 
 def check_consistent_length(*arrays):
     lengths = [_num_samples(X) for X in arrays if X is not None]
@@ -33,7 +58,7 @@ def check_consistent_length(*arrays):
 def check_random_state(seed):
     if seed is None or seed is np.random:
         return np.random.mtrand._rand
-    if isinstance(seed, int):
+    if isinstance(seed, numbers.Integral):
         return np.random.RandomState(seed)
     if isinstance(seed, np.random.RandomState):
         return seed
