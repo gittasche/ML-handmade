@@ -25,6 +25,7 @@ jobs:
       run: | 
         pip install jupyter
         pip install mlhandmade
+        pip install -r requirements.txt
     - name: Run Jupyter notebooks
       run: | 
         for note in `ls examples/*.ipynb`
