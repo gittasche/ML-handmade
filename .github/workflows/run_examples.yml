@@ -27,7 +27,7 @@ jobs:
         pip install jupyter
     - name: Run Jupyter notebooks
       run: | 
-        for note in `ls notebooks/*.ipynb`
+        for note in `ls examples/*.ipynb`
           do jupyter nbconvert --to html --execute $note
           if [ $? != 0 ]
             then echo $note
