@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import entropy
 
 class BaseCriterion:
     def gain(self, y, splits, sample_weight):
@@ -21,10 +22,8 @@ class ClassificationCriterion(BaseCriterion):
 
     @staticmethod
     def entropy(x, sample_weight):
-        # log2(p) raise a RuntimeWarning even with np.where()
         p = np.bincount(x, weights=sample_weight) / np.sum(sample_weight)
-        np.clip(p, np.finfo(p.dtype).eps, None, out=p)
-        return np.sum(-p * np.log2(p))
+        return entropy(p)
 
     @staticmethod
     def gini(x, sample_weight):
