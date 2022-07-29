@@ -1,13 +1,16 @@
 import numpy as np
 
 from ..base import BaseEstimator
-from .linear import LinearKernel
-from .poly import PolynomialKernel
-from .rbf import RBFKernel
+from .kernels import (
+    LinearKernel,
+    PolyKernel,
+    RBFKernel
+)
+
 
 kernels = {
     "linear" : LinearKernel,
-    "poly" : PolynomialKernel,
+    "poly" : PolyKernel,
     "rbf" : RBFKernel
 }
 
