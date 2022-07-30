@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import numpy as np
+import numbers
 
 from ..base import BaseEstimator
 from ..tree.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -8,13 +9,13 @@ from ..utils.validations import check_random_state
 def _get_n_sampes_bootstrap(n_samples, max_samples):
     if max_samples is None:
         return n_samples
-    elif isinstance(max_samples, int):
+    elif isinstance(max_samples, numbers.Integral):
         if not (1 <= max_samples <= n_samples):
             raise ValueError(
                 f"max_samples must be in range 1 to {n_samples}, got {max_samples}"
             )
         return max_samples
-    elif isinstance(max_samples, float):
+    elif isinstance(max_samples, numbers.Real):
         if not (0 < max_samples <= 1):
             raise ValueError(
                 f"max_samples must be in range (0.0, 1.0], got {max_samples}"
