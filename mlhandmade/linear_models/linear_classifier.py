@@ -3,7 +3,7 @@ import numpy as np
 from ..base import BaseEstimator
 from .losses import *
 from .optimizers import *
-from ..preprocessing import add_bias_feature, onehot
+from ..preprocessing import add_bias_feature, onehot, binary
 from ..utils.validations import check_random_state
 
 loss_dict = {"perceptron" : PerceptronLoss, "logistic" : LogisticLoss,
@@ -17,14 +17,10 @@ class LinearClassifier(BaseEstimator):
 
     Attributes
     ----------
-    loss : str
+    loss : ["perceptron", "logistic", "hinge", "sigmoid"]
         Loss function to minimize.
-        Availible losses:
-        ["perceptron", "logistic", "hinge", "sigmoid"]
-    optimizer : str
+    optimizer : ["gd", "sgd", "batch_gd", "sag"]
         Optimization algorithm to minimize loss
-        Availible optimizers:
-        ["gd", "sgd", "batch_gd", "sag"]
     epochs : int
         number of optimization iterations
     tol : float
@@ -42,7 +38,11 @@ class LinearClassifier(BaseEstimator):
         self.rgen = check_random_state(random_state)
 
     def _fit(self, X: np.ndarray, y: np.ndarray):
+        self.classes_ = np.unique(y)
         X = add_bias_feature(X)
+        if not np.all(self.classes_ == [-1, 1]):
+            y = binary(y)
+        
         self.w_ = self.rgen.normal(loc=0.0, scale=0.01, size=self.n_features + 1)
         for _ in range(self.epochs):
             self.w_ = self.optimizer.update(self.loss.grad, X, y, self.w_)
@@ -53,7 +53,8 @@ class LinearClassifier(BaseEstimator):
         return X @ self.w_[1:] + self.w_[0]
 
     def _predict(self, X):
-        return np.where(self.decision_function(X) > 0, 1, -1)
+        indices = np.where(self.decision_function(X) > 0, 1, -1)
+        return self.classes_[indices]
 
 class SoftmaxRegressor(BaseEstimator):
     """
@@ -82,9 +83,11 @@ class SoftmaxRegressor(BaseEstimator):
         return exp_a / np.sum(exp_a, axis=-1, keepdims=True)
 
     def _fit(self, X, y):
+        self.classes_ = np.unique(y)
         X = add_bias_feature(X)
         if y.ndim == 1:
             y = onehot(y)
+        
         self.w_ = self.rgen.normal(loc=0.0, scale=0.01, size=(self.n_features + 1, y.shape[1]))
         for _ in range(self.epochs):
             grad = X.T @ (self._softmax(X, self.w_) - y)
@@ -92,4 +95,5 @@ class SoftmaxRegressor(BaseEstimator):
 
     def _predict(self, X: np.ndarray):
         X = add_bias_feature(X)
-        return np.argmax(self._softmax(X, self.w_), axis=-1)
+        probas = self._softmax(X, self.w_)
+        return self.classes_.take(np.argmax(probas, axis=-1), axis=0)

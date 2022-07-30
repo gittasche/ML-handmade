@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import linalg
 
 from ..base import BaseEstimator
 
@@ -21,7 +22,7 @@ class QuadraticDiscriminantAnalysis(BaseEstimator):
             meang = np.mean(Xg, axis=0)
             means.append(meang)
             Xgc = Xg - meang
-            _, S, Vt = np.linalg.svd(Xgc, full_matrices=False)
+            _, S, Vt = linalg.svd(Xgc, full_matrices=False)
 
             S2 = S**2 / (len(Xg) - 1)
             S2 = ((1 - self.reg_param) * S2) + self.reg_param

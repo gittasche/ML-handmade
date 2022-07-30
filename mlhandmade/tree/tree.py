@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import numpy as np
+import numbers
 
 from ..base import BaseEstimator
 from .criterion import ClassificationCriterion, RegressionCriterion
@@ -67,18 +68,36 @@ class BaseDecisionTree(BaseEstimator):
         if self.is_classifier:
             self.classes_ = np.unique(y)
             self.n_classes = self.classes_.shape[0]
+        
+        self.max_features = self._get_max_features()
         sample_weight = check_sample_weight(sample_weight, X)
         self._build_tree(X, y, sample_weight)
 
+    def _get_max_features(self):
+        if self.max_features is None:
+            return self.n_features
+        elif isinstance(self.max_features, numbers.Integral):
+            if not (1 <= self.max_features <= self.n_features):
+                raise ValueError(
+                    "max_features must be in [1, num_features],"
+                    f" got {self.max_features}"
+                )
+            return self.max_features
+        elif isinstance(self.max_features, numbers.Real):
+            if not (0.0 < self.max_features <= 1.0):
+                raise ValueError(
+                    "max_features must be in (0, 1],"
+                    f" got {self.max_features}"
+                )
+            return round(self.max_features * self.n_features)
+        elif self.max_features == "sqrt":
+            return round(np.sqrt(self.n_features))
+        elif self.max_features == "log2":
+            return round(np.log2(self.n_features))
+
     def _build_tree(self, X, y, sample_weight):
         try:
-            assert X.shape[0] > self.min_samples_leaf
-            assert self.max_depth > 0
-
-            if self.max_features is None:
-                self.max_features = self.n_features
-            elif self.max_features == "sqrt":
-                self.max_features = round(np.sqrt(self.n_features))
+            assert self._check_leaf(X.shape[0])
             
             features = self.rgen.choice(self.n_features, self.max_features)
             gain, feature, value = get_best_split(self.criterion, X, y, features, sample_weight)
@@ -115,6 +134,11 @@ class BaseDecisionTree(BaseEstimator):
         except AssertionError:
             self.is_leaf = True
             self.calculate_leaf_value(y, sample_weight)
+
+    def _check_leaf(self, num_samples_node):
+        samples_condition = num_samples_node > self.min_samples_leaf
+        depth_condition = self.max_depth > 0
+        return samples_condition & depth_condition
 
     def calculate_leaf_value(self, y, sample_weight):
         if self.is_classifier:

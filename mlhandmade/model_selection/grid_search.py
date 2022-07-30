@@ -1,4 +1,5 @@
 import numpy as np
+from collections.abc import Mapping, MutableSequence
 from itertools import product
 from functools import partial, reduce
 from operator import mul
@@ -8,13 +9,20 @@ from ..model_selection import cross_val_score
 from ..utils.validations import check_random_state
 
 class ParamGrid:
+    """
+    ParamGrid class implements datastructure with:
+    1. iterator over all parameter combinations in grid 
+    2. len() overload to get number of combinations
+    """
     def __init__(self, param_grid):
-        if not isinstance(param_grid, (dict, list)):
+        if isinstance(param_grid, Mapping):
+            param_grid = [param_grid]
+        elif isinstance(param_grid, MutableSequence):
+            pass
+        else:
             raise ValueError(
                 f"`params` must be a dict or a list, but got {type(param_grid).__name__}."
             )
-        if isinstance(param_grid, dict):
-            param_grid = [param_grid]
         self.param_grid = param_grid
 
     def __iter__(self):
@@ -35,6 +43,27 @@ class ParamGrid:
         )
 
 class GridSearchCV(BaseEstimator):
+    """
+    Grid search via cross validation
+
+    Parameters
+    ----------
+    estimator : BaseEstimator class
+        subclass of BaseEstimator
+        or class with `fit` and `predict` attributes
+    param_grid : list or dict
+        grid of parameters to score
+    scoring : Callable (default: None)
+        score metric
+    cv : int (default: 5)
+        number of cross validation folds
+    shuffle : bool (default: False)
+        shuffle data in KFoldCV if True
+    random_state : None, int or np.random.RandomState (default: 0)
+        random_state or seed
+    score_kwargs : kwargs
+        keyword arguments for scoring
+    """
     def __init__(
         self,
         estimator,
@@ -46,7 +75,7 @@ class GridSearchCV(BaseEstimator):
         random_state=0,
         **score_kwargs
     ):
-        self.estimator = estimator
+        self.estimator = self._validate_estimator(estimator)
         self.param_grid = ParamGrid(param_grid)
         self.scoring = scoring
         self.cv = cv
@@ -54,6 +83,15 @@ class GridSearchCV(BaseEstimator):
         self.rgen = check_random_state(random_state)
         self.score_kwargs = score_kwargs
     
+    @staticmethod
+    def _validate_estimator(estimator):
+        message = f"estimator {estimator.__name__} must have `fit` and `predict` attributes"
+        if not hasattr(estimator, "fit"):
+            raise TypeError(message)
+        if not hasattr(estimator, "predict"):
+            raise TypeError(message)
+        return estimator
+
     def _fit(self, X, y):
         estimators = []
         params = []
@@ -81,4 +119,7 @@ class GridSearchCV(BaseEstimator):
         self.best_estimator_.fit(X, y)
 
     def _predict(self, X):
+        """
+        Get predictions from best estimator
+        """
         return self.best_estimator_.predict(X)

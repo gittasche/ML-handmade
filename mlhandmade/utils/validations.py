@@ -2,7 +2,7 @@ import numpy as np
 import numbers
 
 def _num_samples(X):
-    message = f"Expected sequence or array-like, got {type(X)}"
+    message = f"Expected sequence or array-like, got {type(X).__name__}"
 
     if not hasattr(X, "__len__") and not hasattr(X, "shape"):
         if hasattr(X, "__array__"):
@@ -14,7 +14,7 @@ def _num_samples(X):
         if len(X.shape) == 0:
             raise TypeError(f"Singleton array {X} cannot be considered a valid collection.")
 
-        if isinstance(X.shape[0], int):
+        if isinstance(X.shape[0], numbers.Integral):
             return X.shape[0]
 
     try:
@@ -23,7 +23,7 @@ def _num_samples(X):
         raise TypeError(message) from err
 
 def _num_features(X):
-    message = f"Unable to find the number of features from X of type {type(X)}"
+    message = f"Unable to find the number of features from X of type {type(X).__name__}"
     if not hasattr(X, "__len__") and not hasattr(X, "shape"):
         if not hasattr(X, "__array__"):
             raise TypeError(message)
@@ -38,7 +38,7 @@ def _num_features(X):
     first_sample = X[0]
 
     if isinstance(first_sample, (str, bytes, dict)):
-        message += f" where the samples are of type {type(first_sample)}"
+        message += f" where the samples are of type {type(first_sample).__name__}"
         raise TypeError(message)
     
     try:
@@ -71,7 +71,7 @@ def check_sample_weight(sample_weight, X):
 
     if sample_weight is None:
         sample_weight = np.ones(n_samples, dtype=np.float64)
-    elif isinstance(sample_weight, (int, float)):
+    elif isinstance(sample_weight, (numbers.Integral, numbers.Real)):
         sample_weight = np.full(n_samples, sample_weight, dtype=np.float64)
     else:
         if not isinstance(sample_weight, np.ndarray):
