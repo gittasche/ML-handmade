@@ -1,13 +1,14 @@
 import numpy as np
 from itertools import combinations_with_replacement as combinations_w_r
 from itertools import combinations
+from typing import Union
 
-def data_shuffle(X: np.ndarray, y: np.ndarray = None, rgen=None) -> np.ndarray:
+from ..utils.validations import check_random_state
+
+def data_shuffle(X: np.ndarray, y: np.ndarray = None, random_state: Union[int, None] = 0) -> np.ndarray:
+    rgen = check_random_state(random_state)
     idx = np.arange(X.shape[0])
-    if rgen is None:
-        np.random.shuffle(idx)
-    else:
-        rgen.shuffle(idx)
+    rgen.shuffle(idx)
     if y is None:
         return X[idx]
     else:

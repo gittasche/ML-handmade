@@ -1,6 +1,7 @@
 from abc import abstractmethod
 import numpy as np
 from ..preprocessing import data_shuffle
+from ..utils.validations import check_random_state
 
 class BaseOptimizer:
     """
@@ -29,14 +30,10 @@ class SGD(BaseOptimizer):
         return w
 
 class BatchGD(BaseOptimizer):
-    def __init__(self, eta, batch_size, random_state=1):
+    def __init__(self, eta, batch_size, random_state=0):
         self.eta = eta
         self.batch_size = batch_size
-        self.rgen = self._setup_rgen(random_state)
-
-    @staticmethod
-    def _setup_rgen(random_state):
-        return np.random.RandomState(random_state)
+        self.rgen = check_random_state(random_state)
 
     def update(self, grad, X, y, w):
         for xb, tb in self._batch_iterator(X, y):
@@ -52,18 +49,14 @@ class BatchGD(BaseOptimizer):
             yield X[idx[begin:end]], y[idx[begin:end]]
 
 class SAG(BaseOptimizer):
-    def __init__(self, eta, random_state=1):
+    def __init__(self, eta, random_state=0):
         self.eta = eta
-        self.rgen = self._setup_rgen(random_state)
+        self.rgen = check_random_state(random_state)
 
     @staticmethod
     def _setup_grads(grad, X, y, w):
         grads = grad(X, y, w)
         return grads
-
-    @staticmethod
-    def _setup_rgen(random_state):
-        return np.random.RandomState(random_state)
 
     def update(self, grad, X, y, w):
         if not hasattr(self, "grads_"):
