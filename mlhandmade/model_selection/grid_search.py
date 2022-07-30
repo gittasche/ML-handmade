@@ -49,7 +49,20 @@ class GridSearchCV(BaseEstimator):
     Parameters
     ----------
     estimator : BaseEstimator class
-        subclass 
+        subclass of BaseEstimator
+        or class with `fit` and `predict` attributes
+    param_grid : list or dict
+        grid of parameters to score
+    scoring : Callable (default: None)
+        score metric
+    cv : int (default: 5)
+        number of cross validation folds
+    shuffle : bool (default: False)
+        shuffle data in KFoldCV if True
+    random_state : None, int or np.random.RandomState (default: 0)
+        random_state or seed
+    score_kwargs : kwargs
+        keyword arguments for scoring
     """
     def __init__(
         self,
@@ -106,4 +119,7 @@ class GridSearchCV(BaseEstimator):
         self.best_estimator_.fit(X, y)
 
     def _predict(self, X):
+        """
+        Get predictions from best estimator
+        """
         return self.best_estimator_.predict(X)

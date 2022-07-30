@@ -1,8 +1,25 @@
 import numpy as np
+from scipy import linalg
 
 from ..base import BaseEstimator
 
 def _class_means(X, y):
+    """
+    Get means of samples for each class and feature
+
+    Parameters
+    ----------
+    X : ndarray of shape (N, D)
+        array of data samples
+    y : ndarray of shape (N,)
+        array of data targets
+    
+    Returns
+    -------
+    means : ndarray of shape (K, D)
+        array with means of sample values.
+        Each row contains means for each feature for given class.
+    """
     classes, y = np.unique(y, return_inverse=True)
     cnt = np.bincount(y)
     means = np.zeros(shape=(len(classes), X.shape[1]))
@@ -16,9 +33,6 @@ class LinearDiscriminantAnalysis(BaseEstimator):
         self.n_components = n_components
 
     def _solve_svd(self, X, y):
-        n_samples, _ = X.shape
-        n_classes = len(self.classes_)
-
         self.means_ = _class_means(X, y)
 
         Xc = []
@@ -28,29 +42,29 @@ class LinearDiscriminantAnalysis(BaseEstimator):
         
         self.xbar_ = np.dot(self.priors_, self.means_)
 
-        Xc = np.concatenate(Xc, axis=0) # ravel in 2d case
+        Xc = np.concatenate(Xc, axis=0)
 
         std = Xc.std(axis=0)
         std[std == 0] = 1.0 # avoid zero division
-        fac = 1.0 / (n_samples - n_classes)
+        fac = 1.0 / (self.n_samples - self.n_classes_)
 
         # scaling of data
         X = np.sqrt(fac) * (Xc / std)
 
-        _, S, Vt = np.linalg.svd(X, full_matrices=False)
+        _, S, Vt = linalg.svd(X, full_matrices=False)
         rank = np.sum(S > self.tol)
         scalings = (Vt[:rank] / std).T / S[:rank]
-        fac = 1.0 if n_classes == 1 else 1.0 / (n_classes - 1)
+        fac = 1.0 if self.n_classes_ == 1 else 1.0 / (self.n_classes_ - 1)
 
         X = np.dot(
             (
-                (np.sqrt((n_samples * self.priors_) * fac))
+                (np.sqrt((self.n_samples * self.priors_) * fac))
                 * (self.means_ - self.xbar_).T
             ).T,
             scalings
         )
         
-        _, S, Vt = np.linalg.svd(X, full_matrices=False)
+        _, S, Vt = linalg.svd(X, full_matrices=False)
 
         rank = np.sum(S > self.tol * S[0])
         self.scalings_ = np.dot(scalings, Vt.T[:, :rank])
@@ -61,6 +75,7 @@ class LinearDiscriminantAnalysis(BaseEstimator):
 
     def _fit(self, X, y):
         self.classes_ = np.unique(y)
+        self.n_classes_ = self.classes_.shape[0]
 
         # prior class probabilities from sample data
         _, y_t = np.unique(y, return_inverse=True)
@@ -80,7 +95,7 @@ class LinearDiscriminantAnalysis(BaseEstimator):
 
         self._solve_svd(X, y)
 
-        if self.classes_.size == 2:
+        if self.n_classes_ == 2:
             self.coef_ = np.array(
                 self.coef_[1, :] - self.coef_[0, :], ndmin=2, dtype=X.dtype
             )
@@ -105,7 +120,7 @@ class LinearDiscriminantAnalysis(BaseEstimator):
 
     def predict_proba(self, X):
         decisions = self.decision_function(X)
-        if self.classes_.size == 2:
+        if self.n_classes_ == 2:
             proba = 1.0 / (1 + np.exp(-decisions))
             return np.vstack([1 - proba, proba]).T
         else:
@@ -113,7 +128,7 @@ class LinearDiscriminantAnalysis(BaseEstimator):
 
     def _predict(self, X):
         scores = self.decision_function(X)
-        if len(scores.shape) == 1:
+        if self.n_classes_ == 2:
             indices = np.where(scores > 0, 1, 0)
         else:
             indices = np.argmax(scores, axis=-1)

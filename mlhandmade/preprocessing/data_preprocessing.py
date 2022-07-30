@@ -25,8 +25,7 @@ def binary(y: np.ndarray, pos_label: int = 1, neg_label: int = -1) -> np.ndarray
     labels = np.unique(y)
     if labels.shape[0] != 2:
         raise ValueError("Must be two classes to encode")
-    else:
-        return np.where(y == labels[0], pos_label, neg_label).astype(int)
+    return np.where(y == labels[0], pos_label, neg_label).astype(int)
 
 def add_bias_feature(X: np.ndarray) -> np.ndarray:
     if X.ndim == 1:

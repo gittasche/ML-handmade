@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import linalg
 
 from ..base import BaseEstimator
 from ..preprocessing import add_bias_feature
@@ -76,15 +77,15 @@ class LinearRegressor(BaseEstimator):
                     break
         
         elif self.method == "direct":
-            self.w_ = np.linalg.inv(X.T @ X) @ X.T @ y
+            self.w_ = linalg.inv(X.T @ X) @ X.T @ y
 
         elif self.method == "svd":
             # w = V x S^-1 x U
-            self.w_ = np.linalg.pinv(X) @ y
+            self.w_ = linalg.pinv(X) @ y
         
         elif self.method == "qr":
-            Q, R = np.linalg.qr(X)
-            self.w_ = np.linalg.inv(R) @ Q.T @ y
+            Q, R = linalg.qr(X)
+            self.w_ = linalg.inv(R) @ Q.T @ y
 
     def _predict(self, X):
         return X @ self.w_[1:] + self.w_[0]
@@ -110,7 +111,7 @@ class RidgeRegressor(BaseEstimator):
     @staticmethod
     def _solve_svd(X, y, alpha):
         # w = V x (S^T x S + alpha * I)^-1 x S^T x U^T x y
-        U, s, Vt = np.linalg.svd(X, full_matrices=False)
+        U, s, Vt = linalg.svd(X, full_matrices=False)
         idx = s > 1e-15 # avoid numerical overflow in denominator
         s_nnz = s[idx]
         UTy = U.T @ y

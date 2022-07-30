@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import linalg
 
 from ..base import BaseEstimator
 from .kernels import (
@@ -46,9 +47,9 @@ class KernelRidge(BaseEstimator):
         Gram.flat[::n_samples + 1] += self.alpha
 
         try:
-            self.dual_coef_ = np.linalg.solve(Gram, y)
+            self.dual_coef_ = linalg.solve(Gram, y, assume_a="pos", overwrite_a=False)
         except np.linalg.LinAlgError:
-            self.dual_coef_ = np.linalg.lstsq(Gram, y)[0]
+            self.dual_coef_ = linalg.lstsq(Gram, y)[0]
 
         # put back Gram matrix
         Gram.flat[::n_samples + 1] -= self.alpha
