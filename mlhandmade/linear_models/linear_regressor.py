@@ -84,7 +84,7 @@ class LinearRegressor(BaseEstimator):
             self.w_ = linalg.pinv(X) @ y
         
         elif self.method == "qr":
-            Q, R = linalg.qr(X)
+            Q, R = linalg.qr(X, mode="economic")
             self.w_ = linalg.inv(R) @ Q.T @ y
 
     def _predict(self, X):
