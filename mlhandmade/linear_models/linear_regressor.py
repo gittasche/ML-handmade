@@ -19,10 +19,8 @@ class LinearRegressor(BaseEstimator):
 
     Attributes
     ----------
-    method : str
+    method : ["direct", "svd", "qr", "gd", "sgd", "batch_gd", "sag"]
         Optimization algorithm to minimize loss
-        Availible optimizers:
-        ["direct", "svd", "qr", "gd", "sgd", "batch_gd", "sag"]
     epochs : int
         number of optimization iterations
     tol : float

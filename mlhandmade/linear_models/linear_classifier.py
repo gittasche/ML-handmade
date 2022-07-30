@@ -17,14 +17,10 @@ class LinearClassifier(BaseEstimator):
 
     Attributes
     ----------
-    loss : str
+    loss : ["perceptron", "logistic", "hinge", "sigmoid"]
         Loss function to minimize.
-        Availible losses:
-        ["perceptron", "logistic", "hinge", "sigmoid"]
-    optimizer : str
+    optimizer : ["gd", "sgd", "batch_gd", "sag"]
         Optimization algorithm to minimize loss
-        Availible optimizers:
-        ["gd", "sgd", "batch_gd", "sag"]
     epochs : int
         number of optimization iterations
     tol : float
