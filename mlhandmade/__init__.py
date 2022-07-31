@@ -1,4 +1,5 @@
 from mlhandmade import (
+    clustering,
     linear_models,
     discriminant_analysis,
     knn,
@@ -12,6 +13,7 @@ from mlhandmade import (
 )
 
 __all__ = [
+    "clustering",
     "linear_models",
     "discriminant_analysis",
     "knn",
