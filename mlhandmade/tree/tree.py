@@ -18,7 +18,7 @@ class BaseDecisionTree(BaseEstimator):
         True if it is a classification tree
     criterion : BaseCriterion object
         callable criterion obeject
-    max_feauters : int (default: None)
+    max_feauters : None, int, float or in ["sqrt", "log2"] (default: None)
         number of features on each recursion step
     min_samples_leaf : int (default: 1)
         minimum possible samples in each leaf
@@ -94,6 +94,11 @@ class BaseDecisionTree(BaseEstimator):
             return round(np.sqrt(self.n_features))
         elif self.max_features == "log2":
             return round(np.log2(self.n_features))
+        else:
+            raise ValueError(
+                "`max_features` can be int, float or either \"sqrt\" or \"log2\","
+                f" got {self.max_features}."
+            )
 
     def _build_tree(self, X, y, sample_weight):
         try:
