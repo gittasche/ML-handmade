@@ -51,8 +51,8 @@ class BaseSVM(BaseEstimator):
         """
         while True:
             # Select working set with WSS 1 "maximal violating pair"[1]
-            # i = argmax{-y * grad | y from I_up}
-            # j = argmin{-y * grad | y from I_low}, where
+            # i = argmax{y * grad | y from I_up}
+            # j = argmin{y * grad | y from I_low}, where
             # I_up = {y | (coef < C) & (y = 1) or (coef > 0) & (y = -1)}
             # I_low = {y | (coef < C) & (y = -1) or (coef > 0) & (y = 1)}
             tg = t * grad

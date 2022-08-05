@@ -48,7 +48,7 @@ class KernelRidge(BaseEstimator):
 
         try:
             self.dual_coef_ = linalg.solve(Gram, y, assume_a="pos", overwrite_a=False)
-        except np.linalg.LinAlgError:
+        except linalg.LinAlgError:
             self.dual_coef_ = linalg.lstsq(Gram, y)[0]
 
         # put back Gram matrix
