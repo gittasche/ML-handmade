@@ -5,7 +5,7 @@ set -x
 
 cd ../../
 
-python -m env examples_env
+python -m venv examples_env
 source examples_env/bin/activate
 
 python -m pip install jupyter, pandas, scikit-learn
