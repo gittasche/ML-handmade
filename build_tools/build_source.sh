@@ -8,5 +8,6 @@ cd ../../
 python -m venv build_env
 source build_env/bin/activate
 
-cd gittasche/mlhandmade
+cd gittasche/ML-handmade
+ls
 python -m pip install .[dev]
