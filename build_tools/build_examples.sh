@@ -8,7 +8,6 @@ cd ../../
 python -m venv examples_env
 source examples_env/bin/activate
 
-python -m pip freeze > tmp/requirements.txt
 python -m pip install ML-handmade/ML-handmade/dist/*.tar.gz
 python -m pip install jupyter pandas scikit-learn
 
