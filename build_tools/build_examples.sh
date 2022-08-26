@@ -10,7 +10,7 @@ source examples_env/bin/activate
 
 python -m pip install jupyter, pandas, scikit-learn
 
-cd gittasche/ML-handmade/examples
+cd ML-handmade/examples
 for note in *.ipynb do
     jupyter nbconvert --to html --execute $note
     if [ $? != 0 ] then
