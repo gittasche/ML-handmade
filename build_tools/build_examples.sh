@@ -8,7 +8,8 @@ cd ../../
 python -m venv examples_env
 source examples_env/bin/activate
 
-python -m pip install numpy scipy matplotlib jupyter pandas scikit-learn
+python -m pip install ML-handmade/ML-handmade/dist/*.tar.gz
+python -m pip install jupyter pandas scikit-learn
 
 cd ML-handmade/ML-handmade/examples
 for note in *.ipynb
