@@ -3,14 +3,14 @@
 set -e
 set -x
 
-cd ../
+cd ../../
 
 python -m env examples_env
 source examples_env/bin/activate
 
 python -m pip install jupyter, pandas, scikit-learn
 
-cd examples
+cd gittasche/mlhandmade/examples
 for note in *.ipynb do
     jupyter nbconvert --to html --execute $note
     if [ $? != 0 ] then
