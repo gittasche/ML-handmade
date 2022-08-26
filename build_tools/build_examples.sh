@@ -8,7 +8,7 @@ cd ../../
 python -m venv examples_env
 source examples_env/bin/activate
 
-python -m pip install jupyter pandas scikit-learn
+python -m pip install jupyter pandas sklearn
 
 cd ML-handmade/ML-handmade/examples
 for note in *.ipynb do
