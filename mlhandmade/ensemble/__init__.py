@@ -8,9 +8,16 @@ from mlhandmade.ensemble.adaboost import (
     AdaBoostRegressor
 )
 
+from mlhandmade.ensemble.gb import (
+    GradientBoostingClassifier,
+    GradientBoostingRegressor
+)
+
 __all__ = [
     "RandomForestClassifier",
     "RandomForestRegressor",
     "AdaBoostClassifier",
-    "AdaBoostRegressor"
+    "AdaBoostRegressor",
+    "GradientBoostingClassifier",
+    "GradientBoostingRegressor"
 ]
