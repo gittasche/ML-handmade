@@ -1,0 +1,19 @@
+[build-system]
+requires = [
+    "setuptools>=63.2.0",
+    "wheel",
+    "numpy>=1.22.3",
+    "scipy>=1.8.0",
+    "matplotlib>=3.5.1"
+]
+
+[mlhandmade.optional-dependencies]
+examples = [
+    "jupyter",
+    "pandas",
+    "scikit-learn"
+]
+
+[tool.black]
+line-width = 88
+target_version = ['py39']

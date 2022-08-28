@@ -22,15 +22,6 @@ jobs:
     - name: Upgrade pip
       run: python -m pip install --upgrade pip
     - name: Install packages
-      run: | 
-        pip install jupyter
-        pip install .[dev]
+      run: bash build_tools/build_source.sh
     - name: Run Jupyter notebooks
-      run: | 
-        for note in `ls examples/*.ipynb`
-          do jupyter nbconvert --to html --execute $note
-          if [ $? != 0 ]
-            then echo $note
-            exit 1
-          fi
-        done
+      run: bash build_tools/build_examples.sh
